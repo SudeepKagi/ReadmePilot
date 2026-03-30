@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getRepos, logout } from '../api.js'
+import api, { getRepos, logout } from '../api.js'
 import { useNavigate } from 'react-router-dom'
 
 export default function Dashboard({ user, setUser }) {
@@ -20,6 +20,20 @@ export default function Dashboard({ user, setUser }) {
         await logout()
         setUser(null)
         navigate('/')
+    }
+
+    const handleConnect = async (repo) => {
+        try {
+            await api.post(`/api/repos/${repo.id}/connect`, {
+                fullName: repo.fullName,
+                defaultBranch: repo.defaultBranch
+            })
+            // Refresh the repos list to show "Connected" status
+            const res = await getRepos()
+            setRepos(res.data)
+        } catch (err) {
+            alert(err.response?.data?.error || 'Failed to connect')
+        }
     }
 
     return (
@@ -148,19 +162,22 @@ export default function Dashboard({ user, setUser }) {
                                 </div>
 
                                 {/* Connect button */}
-                                <button style={{
-                                    padding: '7px 16px',
-                                    background: 'var(--accent)',
-                                    color: '#fff',
-                                    border: 'none',
-                                    borderRadius: '8px',
-                                    fontSize: '12px',
-                                    fontWeight: 500,
-                                    cursor: 'pointer',
-                                    fontFamily: 'inherit',
-                                    flexShrink: 0
-                                }}>
-                                    Connect
+                                <button
+                                    onClick={() => handleConnect(repo)}
+                                    disabled={repo.isConnected}
+                                    style={{
+                                        padding: '7px 16px',
+                                        background: repo.isConnected ? 'var(--accent-light)' : 'var(--accent)',
+                                        color: repo.isConnected ? 'var(--accent2)' : '#fff',
+                                        border: repo.isConnected ? '1px solid var(--accent-mid)' : 'none',
+                                        borderRadius: '8px',
+                                        fontSize: '12px',
+                                        fontWeight: 500,
+                                        cursor: repo.isConnected ? 'default' : 'pointer',
+                                        fontFamily: 'inherit',
+                                        flexShrink: 0
+                                    }}>
+                                    {repo.isConnected ? '✓ Connected' : 'Connect'}
                                 </button>
                             </div>
                         ))}

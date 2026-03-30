@@ -6,6 +6,10 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const authRoutes = require('./routes/auth.js')
 const repoRoutes = require('./routes/repos.js')
+const webhookRoutes = require('./routes/webhook.js')  // ADD THIS
+
+// Start the worker when server starts
+require('./workers/readmeWorker.js')  // ADD THIS
 
 const app = express()
 
@@ -33,6 +37,7 @@ mongoose.connect(process.env.MONGODB_URI)
 
 app.use('/auth', authRoutes)
 app.use('/api', repoRoutes)
+app.use('/webhook', webhookRoutes)  // ADD THIS
 
 app.listen(process.env.PORT, () => {
     console.log(`Server running on port ${process.env.PORT}`)
