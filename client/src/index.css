@@ -1,5 +1,4 @@
-/* Import DM Sans font */
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@500&display=swap");
 
 * {
   box-sizing: border-box;
@@ -12,17 +11,29 @@
   --accent2: #0f766e;
   --accent-light: #e5f7f5;
   --accent-mid: #7dd3cc;
-  --text: #0d1117;
+  --text1: #0d1117;
   --text2: #445566;
   --text3: #8899aa;
   --border: #e3e8f0;
   --surface: #ffffff;
   --bg: #f7f9fc;
+  --radius: 12px;
+  --radius-sm: 8px;
 }
 
 body {
-  font-family: "DM Sans", sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
   background: var(--bg);
-  color: var(--text);
+  color: var(--text1);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+a {
+  text-decoration: none;
+  color: inherit;
 }

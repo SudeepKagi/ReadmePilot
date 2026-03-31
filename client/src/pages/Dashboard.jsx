@@ -255,8 +255,9 @@ export default function Dashboard({ user, setUser }) {
         }
     }
 
+    // Navigate to dedicated repo page instead of opening panel
     const handleRepoClick = (repo) => {
-        if (repo._id || repo.isConnected) setSelectedRepo(repo)
+        if (repo._id) navigate(`/repo/${repo._id}`)
     }
 
     const handleRegenerate = (repoId) => {
@@ -334,7 +335,7 @@ export default function Dashboard({ user, setUser }) {
                         </h1>
                         <p style={{ fontSize: '13px', color: 'var(--text3)', marginTop: '3px' }}>
                             {connectedRepos.length > 0
-                                ? `${connectedRepos.length} connected · click any connected repo to preview its README`
+                                ? `${connectedRepos.length} connected · click any connected repo to view details`
                                 : 'Connect a repo to start auto-generating READMEs on every push'}
                         </p>
                     </div>
@@ -427,7 +428,6 @@ function RepoRow({ repo, onClick, onConnect, onDisconnect }) {
                 cursor: isConnected ? 'pointer' : 'default',
             }}
         >
-            {/* Avatar */}
             <div style={{
                 width: '38px', height: '38px',
                 background: isConnected ? 'var(--accent-light)' : 'var(--bg)',
@@ -439,7 +439,6 @@ function RepoRow({ repo, onClick, onConnect, onDisconnect }) {
                 {repo.name[0].toUpperCase()}
             </div>
 
-            {/* Info */}
             <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '7px' }}>
                     {repo.name}
@@ -479,12 +478,11 @@ function RepoRow({ repo, onClick, onConnect, onDisconnect }) {
                 )}
             </div>
 
-            {/* Right side */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
                 {isConnected ? (
                     <>
                         <span style={{ fontSize: '11px', color: 'var(--text3)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            Click to preview
+                            View details
                             <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
                                 <path d="M2 5h6M5 2l3 3-3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
@@ -493,8 +491,7 @@ function RepoRow({ repo, onClick, onConnect, onDisconnect }) {
                             onClick={handleDisconnect}
                             disabled={disconnecting}
                             style={{
-                                padding: '7px 12px',
-                                background: 'transparent',
+                                padding: '7px 12px', background: 'transparent',
                                 color: disconnecting ? 'var(--text3)' : '#ef4444',
                                 border: '1px solid',
                                 borderColor: disconnecting ? 'var(--border)' : '#fca5a5',

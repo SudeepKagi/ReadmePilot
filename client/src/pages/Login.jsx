@@ -1,125 +1,154 @@
-export default function Login() {
-    // This is the ONLY thing the login page does:
-    // Send the user to your backend's GitHub OAuth route
-    // Your backend handles everything from there
-    const handleLogin = () => {
-        window.location.href = 'http://localhost:5000/auth/github'
-    }
+import React from "react";
+import { useNavigate, Navigate } from "react-router-dom";
+import { Github, ArrowLeft, Zap, Shield, RefreshCw } from "lucide-react";
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+const Login = ({ user }) => {
+    const navigate = useNavigate();
+
+    // If already logged in, redirect to dashboard
+    if (user) return <Navigate to="/dashboard" replace />;
+
+    const handleGitHubLogin = () => {
+        window.location.href = `${BACKEND_URL}/auth/github`;
+    };
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            background: 'var(--surface)',
-            display: 'flex',
-            flexDirection: 'column'
-        }}>
+        <div className="h-dvh mx-auto bg-white flex flex-col md:flex-row overflow-hidden relative selection:bg-blue-100 selection:text-white font-sans">
 
-            {/* Navbar */}
-            <nav style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '16px 48px',
-                borderBottom: '1px solid var(--border)'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '16px' }}>
-                    <div style={{
-                        width: '28px', height: '28px',
-                        background: 'var(--accent)',
-                        borderRadius: '7px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center'
-                    }}>
-                        <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
+            {/* bg blobs */}
+            <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[160px] pointer-events-none" />
+            <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-sky-100/20 rounded-full blur-[160px] pointer-events-none" />
+
+            {/* top bar */}
+            <div className="absolute top-0 left-0 w-full p-4 lg:p-6 flex justify-between items-center z-50 pointer-events-none">
+                <a href="/" className="pointer-events-auto flex items-center gap-2.5">
+                    <div className="w-8 h-8 bg-[#1d4ed8] rounded-lg flex items-center justify-center">
+                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
                             <path d="M4 5.5C4 4.4 4.9 3.5 6 3.5h8c1.1 0 2 .9 2 2V15c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V5.5z" stroke="#fff" strokeWidth="1.4" />
                             <path d="M7 7.5h6M7 10.5h4M7 13.5h5" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
                         </svg>
                     </div>
-                    ReadmePilot
-                </div>
-                <button onClick={handleLogin} style={{
-                    padding: '8px 18px',
-                    background: 'var(--accent)',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    fontFamily: 'inherit'
-                }}>
-                    Sign in with GitHub
-                </button>
-            </nav>
-
-            {/* Hero */}
-            <div style={{
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '60px 48px',
-                textAlign: 'center'
-            }}>
-                <div style={{
-                    display: 'inline-flex', alignItems: 'center', gap: '6px',
-                    background: 'var(--accent-light)', border: '1px solid var(--accent-mid)',
-                    color: 'var(--accent2)', fontSize: '12px', fontWeight: 500,
-                    padding: '4px 14px', borderRadius: '20px', marginBottom: '24px'
-                }}>
-                    <span style={{
-                        width: '6px', height: '6px',
-                        background: 'var(--accent)', borderRadius: '50%',
-                        animation: 'pulse 2s infinite'
-                    }} />
-                    Auto-pilot for your README
-                </div>
-
-                <h1 style={{
-                    fontSize: '48px', fontWeight: 600,
-                    letterSpacing: '-1.8px', lineHeight: 1.12,
-                    marginBottom: '18px'
-                }}>
-                    Your README,<br />
-                    always <span style={{ color: 'var(--accent)' }}>up to date.</span>
-                </h1>
-
-                <p style={{
-                    fontSize: '16px', color: 'var(--text2)',
-                    maxWidth: '460px', lineHeight: 1.65,
-                    marginBottom: '36px'
-                }}>
-                    Connect your GitHub repo once. ReadmePilot patches your README
-                    on every push — only updating what actually changed.
-                </p>
-
-                <button onClick={handleLogin} style={{
-                    display: 'flex', alignItems: 'center', gap: '10px',
-                    padding: '13px 28px',
-                    background: '#24292f',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '10px',
-                    fontSize: '15px',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                    transition: 'background 0.15s'
-                }}
-                    onMouseEnter={e => e.target.style.background = '#000'}
-                    onMouseLeave={e => e.target.style.background = '#24292f'}
+                    <span className="font-bold text-slate-900 text-sm tracking-tight">ReadmePilot</span>
+                </a>
+                <button
+                    onClick={() => navigate("/")}
+                    className="pointer-events-auto flex items-center gap-2 text-slate-400 hover:text-[#1d4ed8] transition-colors text-xs font-bold uppercase tracking-widest cursor-pointer group"
                 >
-                    {/* GitHub icon */}
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12" />
-                    </svg>
-                    Continue with GitHub
+                    <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                    Back
                 </button>
+            </div>
 
-                <p style={{ marginTop: '14px', fontSize: '12px', color: 'var(--text3)' }}>
-                    Free forever · No credit card needed
-                </p>
+            {/* ── LEFT: login form ── */}
+            <div className="w-full md:w-[45%] lg:w-[42%] h-full flex flex-col justify-center px-10 lg:px-20 bg-white relative">
+                <div className="max-w-sm w-full animate-in fade-in slide-in-from-bottom-6 duration-700">
+
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#1d4ed8]/10 text-[#1d4ed8] rounded-full text-[10px] font-bold uppercase tracking-widest mb-6 border border-[#1d4ed8]/20">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#1d4ed8] animate-pulse" />
+                        Secure GitHub OAuth
+                    </div>
+
+                    <h1 className="text-5xl lg:text-6xl font-black tracking-tighter text-slate-900 mb-4 leading-none">
+                        Ship docs<br />
+                        <span className="text-[#1d4ed8]">automatically.</span>
+                    </h1>
+                    <p className="text-slate-500 mb-10 text-base leading-relaxed font-medium">
+                        Connect your repos. Push code. ReadmePilot writes your README — every single time.
+                    </p>
+
+                    <button
+                        onClick={handleGitHubLogin}
+                        className="w-full h-14 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold transition-all duration-200 flex items-center justify-center gap-3 group shadow-xl shadow-slate-900/20 hover:shadow-2xl hover:shadow-slate-900/30 cursor-pointer"
+                    >
+                        <Github size={20} />
+                        <span className="text-base tracking-tight">Continue with GitHub</span>
+                    </button>
+
+                    <p className="mt-6 text-[11px] text-slate-400 font-bold uppercase tracking-[0.22em] leading-relaxed">
+                        Requires repo read & write access · AES-256 encrypted
+                    </p>
+
+                    {/* feature pills */}
+                    <div className="mt-10 flex flex-col gap-3">
+                        {[
+                            { icon: <RefreshCw size={13} />, text: "README updated on every git push" },
+                            { icon: <Zap size={13} />, text: "AI reads your actual code & config files" },
+                            { icon: <Shield size={13} />, text: "Loop-safe · tokens encrypted at rest" },
+                        ].map((f, i) => (
+                            <div key={i} className="flex items-center gap-3 text-sm text-slate-500">
+                                <div className="w-6 h-6 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center text-[#1d4ed8] flex-shrink-0">
+                                    {f.icon}
+                                </div>
+                                {f.text}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* ── RIGHT: social proof ── */}
+            <div className="hidden md:flex flex-1 h-full bg-[#fafafa] relative items-center justify-center p-12 lg:p-20 overflow-hidden border-l border-slate-100">
+                <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:22px_22px] opacity-50" />
+
+                <div className="relative z-10 max-w-md w-full animate-in fade-in zoom-in-95 duration-1000">
+                    <div className="bg-white/80 backdrop-blur-md p-10 lg:p-12 rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(29,78,216,0.08)] border border-slate-200 relative">
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-0.5 bg-[#1d4ed8] rounded-b-full shadow-[0_0_16px_rgba(29,78,216,0.4)]" />
+
+                        <div className="mb-8 flex items-center gap-2 text-xs font-mono font-bold text-slate-400 uppercase tracking-widest">
+                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                            Live activity
+                        </div>
+
+                        <div className="space-y-3 mb-8">
+                            {[
+                                { repo: "Simon-Says", action: "README committed to main", time: "2m ago" },
+                                { repo: "Stayora", action: "Health score 90/100 · 9 sections", time: "1h ago" },
+                                { repo: "Fall-Detection", action: "Job queued by webhook push", time: "5d ago" },
+                            ].map((item, i) => (
+                                <div key={i} className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 border border-slate-100 px-3 py-2.5">
+                                    <div className="flex items-center gap-2.5 min-w-0">
+                                        <div className="w-6 h-6 rounded-md bg-[#1d4ed8] flex items-center justify-center font-black text-white text-[10px] flex-shrink-0">
+                                            {item.repo[0]}
+                                        </div>
+                                        <div className="min-w-0">
+                                            <div className="text-xs font-bold text-slate-800 truncate">{item.repo}</div>
+                                            <div className="text-[10px] text-slate-400 truncate">{item.action}</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                                        <span className="text-[10px] text-slate-400 font-mono">{item.time}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <blockquote className="text-xl lg:text-2xl font-black text-slate-900 leading-[1.2] tracking-tight mb-8">
+                            "Finally, I can focus on building instead of writing docs."
+                        </blockquote>
+
+                        <div className="flex items-center gap-4 pt-6 border-t border-slate-100">
+                            <img src="https://i.pravatar.cc/150?u=48" alt="" className="w-11 h-11 rounded-full border-2 border-[#1d4ed8]/10 shadow" />
+                            <div>
+                                <div className="font-black text-slate-900 text-sm">Alex Rivers</div>
+                                <div className="text-xs text-[#1d4ed8] font-bold tracking-tight uppercase">Lead Engineer @ TechFlow</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-10 flex justify-center gap-8 text-slate-400 font-bold text-[10px] uppercase tracking-[0.28em] opacity-60">
+                        <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[#1d4ed8]" /> AES-256</span>
+                        <span className="text-slate-200">·</span>
+                        <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[#1d4ed8]" /> OAuth 2.0</span>
+                        <span className="text-slate-200">·</span>
+                        <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-[#1d4ed8]" /> Loop-safe</span>
+                    </div>
+                </div>
             </div>
         </div>
-    )
-}
+    );
+};
+
+export default Login;
