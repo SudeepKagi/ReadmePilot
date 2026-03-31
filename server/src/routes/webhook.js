@@ -23,7 +23,6 @@ router.post('/github', async (req, res) => {
         .digest('hex')
 
     // Use timing-safe comparison — prevents timing attacks
-    // Regular === comparison can leak info through response time differences
     const sigBuffer = Buffer.from(signature)
     const expectedBuffer = Buffer.from(expectedSignature)
 
@@ -39,12 +38,19 @@ router.post('/github', async (req, res) => {
     // GitHub sends different events — we only care about push
     const event = req.headers['x-github-event']
     if (event !== 'push') {
-        // Acknowledge but don't process
         return res.status(200).json({ message: 'Event ignored' })
     }
 
+    // FIX: Ignore commits made by ReadmePilot itself
+    // Without this: we commit README → GitHub fires webhook → we commit again → infinite loop
+    const commitMessages = payload.commits?.map(c => c.message) || []
+    const isAutoCommit = commitMessages.every(msg => msg.includes('[ReadmePilot]'))
+    if (isAutoCommit) {
+        console.log('Auto-commit detected — skipping to prevent loop')
+        return res.status(200).json({ message: 'Auto-commit ignored' })
+    }
+
     // Ignore pushes to non-default branches
-    // e.g. if someone pushes to a feature branch, skip it
     const branch = payload.ref?.replace('refs/heads/', '')
     const repoFullName = payload.repository?.full_name
 
@@ -68,7 +74,6 @@ router.post('/github', async (req, res) => {
     }
 
     // STEP 4: Add job to queue
-    // This takes ~1ms — we respond to GitHub immediately after
     await readmeQueue.add(
         'generate-readme',
         {
@@ -77,7 +82,6 @@ router.post('/github', async (req, res) => {
             userId: repo.userId,
             defaultBranch: repo.defaultBranch,
             pusherName: payload.pusher?.name,
-            // Changed files from all commits in this push
             commits: payload.commits?.map(c => ({
                 id: c.id,
                 message: c.message,
@@ -87,8 +91,6 @@ router.post('/github', async (req, res) => {
             })) || []
         },
         {
-            // Dedup key — if same repo pushes twice quickly,
-            // don't process it twice
             jobId: `${repoFullName}-${Date.now()}`
         }
     )
@@ -96,8 +98,6 @@ router.post('/github', async (req, res) => {
     console.log(`Job queued for ${repoFullName}`)
 
     // STEP 5: Respond to GitHub immediately
-    // GitHub expects a response within 10 seconds
-    // We've already queued the job so we're done here
     res.status(200).json({ message: 'Job queued' })
 })
 
